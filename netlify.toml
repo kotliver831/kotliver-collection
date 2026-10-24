@@ -1,6 +1,6 @@
 [build]
-  command = "cd kotliver-collection-src && npm install && npm run build"
-  publish = "kotliver-collection-src/dist"
+  command = "cd kotliver-collection-src/kotliver-collection-src-v1.1.0 && npm install && npm run build"
+  publish = "kotliver-collection-src/kotliver-collection-src-v1.1.0/dist"
 
 [build.environment]
   NODE_VERSION = "20"
