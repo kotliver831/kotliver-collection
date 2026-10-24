@@ -1,5 +1,5 @@
 [build]
-  base = "kotliver-collection-src-v1.1.0 (12)"
+  base = "kotliver-collection-src"
   command = "npm run build"
   publish = "dist"
 
