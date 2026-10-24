@@ -1,7 +1,7 @@
 [build]
-  base = "kotliver-collection-src"
+  base = ""
   command = "npm run build"
-  publish = "dist"
+  publish = "kotliver-collection-src/dist"
 
 [build.environment]
   NODE_VERSION = "20"
