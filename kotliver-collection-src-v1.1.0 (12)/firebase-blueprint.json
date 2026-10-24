@@ -1,0 +1,120 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Direct e-commerce and affiliate partner products",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 200 },
+        "type": { "type": "string", "enum": ["direct", "affiliate"] },
+        "category": { "type": "string", "maxLength": 100 },
+        "price": { "type": "number" },
+        "originalPrice": { "type": "number" },
+        "discountPercent": { "type": "number" },
+        "sku": { "type": "string", "maxLength": 60 },
+        "stock": { "type": "number" },
+        "rating": { "type": "number" },
+        "reviewsCount": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "draft"] },
+        "affiliateUrl": { "type": "string", "maxLength": 1000 },
+        "affiliatePlatform": { "type": "string", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 5000 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "type", "category", "price", "sku", "status"]
+    },
+    "Banner": {
+      "title": "Banner",
+      "description": "Hero slider and promotional banners",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 200 },
+        "subtitle": { "type": "string", "maxLength": 500 },
+        "badge": { "type": "string", "maxLength": 50 },
+        "imageUrl": { "type": "string", "maxLength": 1000 },
+        "targetUrl": { "type": "string", "maxLength": 1000 },
+        "placement": { "type": "string", "enum": ["hero_slider", "homepage_mid", "header_top", "category_banner"] },
+        "sortOrder": { "type": "number" },
+        "isActive": { "type": "boolean" },
+        "buttonText": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["title", "imageUrl", "targetUrl", "placement", "isActive"]
+    },
+    "AdPlacement": {
+      "title": "AdPlacement",
+      "description": "Configured Adsterra ad slots",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 100 },
+        "location": { "type": "string", "enum": ["header_top", "homepage_infeed", "sidebar", "footer", "popunder", "social_bar"] },
+        "format": { "type": "string", "enum": ["728x90", "300x250", "responsive_native", "direct_link", "popunder", "social_bar"] },
+        "adCode": { "type": "string", "maxLength": 10000 },
+        "isActive": { "type": "boolean" },
+        "notes": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["name", "location", "format", "isActive"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer orders placed via Cash on Delivery",
+      "type": "object",
+      "properties": {
+        "orderNumber": { "type": "string", "maxLength": 50 },
+        "customerName": { "type": "string", "maxLength": 100 },
+        "customerPhone": { "type": "string", "maxLength": 25 },
+        "customerEmail": { "type": "string", "maxLength": 100 },
+        "deliveryAddress": { "type": "string", "maxLength": 500 },
+        "deliveryZone": { "type": "string", "enum": ["Inside City (৳60)", "Outside City (৳120)"] },
+        "deliveryFee": { "type": "number" },
+        "subtotal": { "type": "number" },
+        "total": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["Cash on Delivery"] },
+        "paymentStatus": { "type": "string", "enum": ["Pending", "Paid"] },
+        "status": { "type": "string", "enum": ["Pending", "Confirmed", "Processing", "Shipped", "Delivered", "Cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["orderNumber", "customerName", "customerPhone", "deliveryAddress", "total", "status"]
+    },
+    "SiteSettings": {
+      "title": "SiteSettings",
+      "description": "Store configuration and contact details",
+      "type": "object",
+      "properties": {
+        "storeName": { "type": "string", "maxLength": 100 },
+        "tagline": { "type": "string", "maxLength": 200 },
+        "contactPhone": { "type": "string", "maxLength": 50 },
+        "contactEmail": { "type": "string", "maxLength": 100 },
+        "address": { "type": "string", "maxLength": 300 },
+        "currency": { "type": "string", "maxLength": 10 },
+        "affiliateDisclosure": { "type": "string", "maxLength": 2000 }
+      },
+      "required": ["storeName", "currency"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Products collection readable by public, writable only by admins"
+    },
+    "/banners/{bannerId}": {
+      "schema": "Banner",
+      "description": "Store promotional banners, public read, admin write"
+    },
+    "/adPlacements/{placementId}": {
+      "schema": "AdPlacement",
+      "description": "Adsterra ad configuration, public read, admin write"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Customer orders, create allowed by public with validation, read/update restricted to admin or order lookup"
+    },
+    "/settings/{settingId}": {
+      "schema": "SiteSettings",
+      "description": "Website global configuration, public read, admin write"
+    },
+    "/admins/{adminId}": {
+      "schema": "SiteSettings",
+      "description": "Admin authorization registry, strictly readable/writable by superadmin"
+    }
+  }
+}

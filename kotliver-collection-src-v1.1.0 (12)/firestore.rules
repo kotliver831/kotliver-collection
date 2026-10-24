@@ -1,0 +1,102 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: Default deny all unmapped paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Security Primitives & Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwnerEmail() {
+      return isSignedIn()
+        && 'email' in request.auth.token
+        && (request.auth.token.email == 'jamjam8314@gmail.com' || request.auth.token.email.lower() == 'jamjam8314@gmail.com');
+    }
+
+    function isVerifiedStoreOwner() {
+      return isOwnerEmail();
+    }
+
+    function isAdmin() {
+      return isOwnerEmail()
+        || (isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+            && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.email == 'jamjam8314@gmail.com');
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_.-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // 1. PRODUCTS COLLECTION (Public catalog read, admin-only write)
+    match /products/{productId} {
+      allow get, list: if true;
+      allow create, update, delete: if isValidId(productId) && isAdmin();
+    }
+
+    // 2. BANNERS COLLECTION (Public promotional slider read, admin-only write)
+    match /banners/{bannerId} {
+      allow get, list: if true;
+      allow create, update, delete: if isValidId(bannerId) && isAdmin();
+    }
+
+    // 3. AD PLACEMENTS (ADSTERRA)
+    match /adPlacements/{placementId} {
+      allow get, list: if true;
+      allow create, update, delete: if isValidId(placementId) && isAdmin();
+    }
+
+    // 4. ORDERS COLLECTION
+    match /orders/{orderId} {
+      // Admin can list and view all orders
+      allow get, list: if isAdmin();
+
+      // Customer can create a new Cash on Delivery order with validated fields
+      allow create: if isValidId(orderId)
+        && incoming().orderNumber is string && incoming().orderNumber.size() <= 50
+        && incoming().customerName is string && incoming().customerName.size() >= 2 && incoming().customerName.size() <= 100
+        && incoming().customerPhone is string && incoming().customerPhone.size() >= 10 && incoming().customerPhone.size() <= 25
+        && incoming().deliveryAddress is string && incoming().deliveryAddress.size() >= 10 && incoming().deliveryAddress.size() <= 500
+        && incoming().total is number && incoming().total > 0
+        && incoming().paymentMethod == 'Cash on Delivery'
+        && incoming().status == 'Pending';
+
+      // Only administrators can update order status or delete orders
+      allow update, delete: if isValidId(orderId) && isAdmin();
+    }
+
+    // 5. WEBSITE SETTINGS
+    match /settings/{settingId} {
+      allow get, list: if true;
+      allow create, update, delete: if isValidId(settingId) && isAdmin();
+    }
+
+    // 6. CATEGORIES
+    match /categories/{categoryId} {
+      allow get, list: if true;
+      allow create, update, delete: if isValidId(categoryId) && isAdmin();
+    }
+
+    // 7. ADMIN AUTHORIZATION REGISTRY (LEAST-PRIVILEGE BOOTSTRAP)
+    match /admins/{adminId} {
+      allow read, create, update: if isValidId(adminId)
+        && isOwnerEmail()
+        && request.auth.uid == adminId;
+
+      // Admin deletion through client SDK is completely denied
+      allow delete: if false;
+    }
+  }
+}
