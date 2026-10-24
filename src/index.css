@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --brand-emerald: #176B4D;
+    --brand-emerald-dark: #0f4b35;
+    --brand-emerald-light: #1f8a63;
+    --brand-gold: #D4A72C;
+    --brand-gold-dark: #b88f22;
+    --brand-gold-light: #f3c959;
+    --brand-gold-pale: #fdf8eb;
+    --brand-dark: #111827;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    color: #1f2937;
+    background-color: #f8fafc;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-serif-brand {
+    font-family: 'Cinzel', serif, system-ui;
+  }
+}
+
+/* Custom styling for luxury KC brand aesthetics */
+.bg-emerald-brand {
+  background-color: #176B4D;
+}
+
+.text-emerald-brand {
+  color: #176B4D;
+}
+
+.border-emerald-brand {
+  border-color: #176B4D;
+}
+
+.bg-gold-brand {
+  background-color: #D4A72C;
+}
+
+.text-gold-brand {
+  color: #D4A72C;
+}
+
+.border-gold-brand {
+  border-color: #D4A72C;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
