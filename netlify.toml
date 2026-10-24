@@ -1,9 +1,6 @@
 [build]
   command = "npm run build"
-  publish = "kotliver-collection-src/kotliver-collection-src-v1.1.0/dist"
-
-[build.environment]
-  NODE_VERSION = "20"
+  publish = "kotliver-collection-src/dist"
 
 [[redirects]]
   from = "/*"
