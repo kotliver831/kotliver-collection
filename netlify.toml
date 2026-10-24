@@ -1,0 +1,9 @@
+[build]
+  base = "kotliver-collection-src-v1.1.0 (12)"
+  command = "npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
